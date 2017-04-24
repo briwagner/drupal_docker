@@ -1,0 +1,38 @@
+version: "2"
+services:
+
+  drupal:
+    image: drupal:7
+    container_name: cms
+    ports:
+      - 8080:80
+    links:
+      - db
+    environment:
+      DB_HOST: db:3306
+      DB_USER: drupal
+      DB_PASSWORD: drupal
+      DB_NAME: hos
+      DB_DRIVER: mysql
+    networks:
+      - brian
+
+  db:
+    image: mysql@sha256:9eeaffc43e1e46e8ae17b5fc770281a90d388d879ef78d02525d8d6c2c83a197
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hos
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+    ports:
+      - 3306:3306
+    networks:
+      - brian
+    # volumes:
+    #   - "./volumes/db:/var/lib/mysql"
+    volumes:
+      - "./sql/database:/docker-entrypoint-initdb.d"
+
+networks:
+  brian:
